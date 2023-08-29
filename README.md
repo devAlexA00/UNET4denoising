@@ -1,4 +1,4 @@
-# denUNET
+# denU-Net
 Adaptation of the U-Net architecture for denoising medical images.
 
 The U-Net is a CNN architecture designed by Ronneberger, Fischer and Brox (2015), for the purpose of biomedical image segmentation. Here, an adaptation of this architecture was built for biomedical image denoising.
