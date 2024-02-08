@@ -1,8 +1,27 @@
 # U-Net 4 denoising
-Adaptation of the U-Net architecture for denoising medical images.
+Adaptation of the U-Net architecture for **denoising medical images**.
 
-The U-Net is a CNN architecture designed by Ronneberger, Fischer and Brox (2015), for the purpose of biomedical image segmentation. Here, an adaptation of this architecture was built for biomedical image denoising.
+## CNN Architecture
+The U-Net is a CNN architecture designed by Ronneberger, Fischer and Brox (2015), for the purpose of biomedical image segmentation. Here, an adaptation of this architecture was built for biomedical image denoising. In particular, this project was developed for restoring fast-acquisition PET images to their standard quality. 2D and 3D implementations are provided.
 
-- denUNet2D.py and denUNet3D.py contain the PyTorch implementation of the 2D and 3D networks.
+### 3D U-Net
+
+![U-Net adaptation for medical image denoising](https://github.com/luisacbscs/UNET4denoising/assets/100357143/c7a91d82-a0bc-46dc-b980-65021913ba4f)
+
+The network's input is, by default, a 128×128×128 vx volume. The number of encoder/decoder blocks was reduced to three to reduce computational complexity, as we are dealing with 3D images. Each encoder block is composed by two convolutional layers followed by a downsampling layer. Each convolutional layer contains a **convolution** that doubles the number of feature maps (except in the input block, where, by default, 64 feature maps are extracted from the 1-channel input) and a **ReLU activation**. Batch normalisation was removed, as the scale of each PET image, in particular, is not fixed-range and contains important physiological information which musn't be altered. Downsampling is done through **average pooling**, instead of max pooling, as denoising is not a classification problem.
+
+The implementation of this CNN on PyTorch is in `fastPET_UNet3D.py`.
+
+### 2D U-Net
+
+![2D_U-Net](https://github.com/luisacbscs/UNET4denoising/assets/100357143/ed88739e-171a-4807-9499-0f94b1b2b075)
+
+The network's input is, by default, a 144×144 px image. To do this, as the images are 3D arrays, each volume must be divided in its axial slices, building a 2D dataset. The composition of the different blocks is similar to that of the 3D version.
+
+The implementation of this CNN on PyTorch is in `fastPET_UNet2D.py`.
+
+## Training the network
+
 - makeTorchDataset.py is an auxiliary file that receives a dataframe with the training pairs' paths and returns the corresponding images as torch tensors.
+
 - denUNet_train.py is the customisable file used to train the network. It expects the paths to the images and targets (assuming they're ordered) and the training parameters.
