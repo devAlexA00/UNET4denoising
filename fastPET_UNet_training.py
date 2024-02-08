@@ -10,19 +10,19 @@ import os
 from makeTorchDataset import torchDataset
 from torch.utils.data import DataLoader
 from tqdm import tqdm
-from denUNet3D import denUNet3D
-from denUNet2D import denUNet2D
+from fastPET_UNet3D import UNet3D
+from fastPET_UNet2D import UNet2D
 from torchsummary import summary
 
 # ----------------------------------------------------------------------------------------------------------------------
 # TRAINING AND TARGET IMAGES MUST BE ORDERED IN THE RESPECTIVE FOLDERS (FOR PAIRING).
-TARGET_PATH = 'C:\\Users\\Luisa\\Documents\\master_thesis\\Datasets\\2D_dataset\\PET_15s_EARL1\\002'
+TARGET_PATH = 'Dataset\\Target\\'
 # PATH TO THE REFERENCE IMAGES
 
-IM_PATH = 'C:\\Users\\Luisa\\Documents\\master_thesis\\Datasets\\2D_dataset\\PET_70s_EARL1\\002'
+IM_PATH = 'Dataset\\Training\\'
 # PATH TO THE TRAINING IMAGES
 
-DIM = 2
+DIM = 2    # EITHER 2 (if the images are 2D --> 2D U-Net) or 3 (if the images are 3D --> 3D U-Net)
 LOSS = "MSE"
 
 IMG_SIZE = 64
@@ -49,39 +49,33 @@ LOSS_FUNCTION = {
     "L1": nn.L1Loss(),
 }
 
-TARGET_PATH = TARGET_PATH + '\\'
-IM_PATH = IM_PATH + '\\'
-
 # -------------------------------------------------------------------------------------------------- DATASET
 train_lst = []
 valid_lst = []
 for i in range(len(os.listdir(IM_PATH))):
     if T <= i < (V+T):
-        valid_lst.append([IM_PATH + sorted(os.listdir(IM_PATH))[i],
-                          TARGET_PATH + sorted(os.listdir(TARGET_PATH))[i]])
+        valid_lst.append([os.path.join(IM_PATH, sorted(os.listdir(IM_PATH))[i]),
+                          os.path.join(TARGET_PATH, sorted(os.listdir(TARGET_PATH))[i])])
 
     elif i >= (V+T):
-
-        train_lst.append([IM_PATH + sorted(os.listdir(IM_PATH))[i],
-                          TARGET_PATH + sorted(os.listdir(TARGET_PATH))[i]])
+        train_lst.append([os.path.join(IM_PATH, sorted(os.listdir(IM_PATH))[i]),
+                          os.path.join(TARGET_PATH, sorted(os.listdir(TARGET_PATH))[i])])
 
 COLUMNS = ['images', 'targets']
 train_df = pd.DataFrame(train_lst, columns=COLUMNS)
 valid_df = pd.DataFrame(valid_lst, columns=COLUMNS)
 
-
 trainingSet = torchDataset(train_df, PATCH_SIZE=IMG_SIZE)
 validationSet = torchDataset(valid_df, PATCH_SIZE=IMG_SIZE)
-
 
 tLoader = DataLoader(trainingSet, batch_size=BATCH_SIZE, shuffle=True)
 vLoader = DataLoader(validationSet, batch_size=BATCH_SIZE)
 
 # -------------------------------------------------------------------------------------------------- MODEL TRAINING
 if DIM == 3:
-    model = denUNet3D()
+    model = UNet3D()
 else:
-    model = denUNet2D()
+    model = UNet2D()
 
 model.to(DEVICE)
 
@@ -162,7 +156,7 @@ if not os.path.isdir('Models/'):
     os.mkdir('Models/')
 
 EPOCH = 0
-MODEL_NAME = f"denUNET{DIM}D_{LOSS}_{str(EPOCH).zfill(3)}_PET.pt"
+MODEL_NAME = f"model_fastPET_UNET{DIM}D_{LOSS}_{str(EPOCH).zfill(3)}.pt"
 LAST_MODEL = MODEL_NAME
 
 best_valid_loss = np.Inf
