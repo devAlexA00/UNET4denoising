@@ -66,7 +66,7 @@ class DecoderBlock(nn.Module):
         return x
 
 
-class denUNet3D(nn.Module):
+class UNet3D(nn.Module):
 
     def __init__(self, n_blocks=None, n_channels=None):
 
