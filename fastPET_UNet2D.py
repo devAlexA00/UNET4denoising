@@ -70,7 +70,7 @@ class DecoderBlock(nn.Module):
         return x
 
 
-class denUNet2D(nn.Module):
+class UNet2D(nn.Module):
 
     def __init__(self):
 
