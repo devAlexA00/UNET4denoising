@@ -25,6 +25,8 @@ The implementation of this CNN on PyTorch is in `fastPET_UNet2D.py`.
 `fastPET_UNet_training.py` is the training script. The first block contains the customisable parameters:
 
 - `TARGET_PATH` and `IM_PATH` will store the paths to the folders that contain the target and training images, respectively.
+- `DIM` must be set to `2` if the 2D U-Net is to be used (2D dataset) or to `3` if the 3D U-Net is to be used (3D dataset).
+- `LOSS` refers to the loss function to be used during training: `MSE` and `L1`
 
 `makeTorchDataset.py` is an auxiliary file that receives a dataframe with the training pairs' paths and returns the corresponding images as torch tensors.
 
