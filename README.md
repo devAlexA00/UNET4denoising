@@ -22,7 +22,14 @@ The implementation of this CNN on PyTorch is in `fastPET_UNet2D.py`.
 
 ## Training the network
 
-- makeTorchDataset.py is an auxiliary file that receives a dataframe with the training pairs' paths and returns the corresponding images as torch tensors.
+`fastPET_UNet_training.py` is the training script. The first block contains the customisable parameters:
 
-- denUNet_train.py is the customisable file used to train the network. It expects the paths to the images and targets (assuming they're ordered) and the training parameters.
+- `TARGET_PATH` and `IM_PATH` will store the paths to the folders that contain the target and training images, respectively.
+
+`makeTorchDataset.py` is an auxiliary file that receives a dataframe with the training pairs' paths and returns the corresponding images as torch tensors.
+
+## Model Application
+
+Work in progress...
+
 
